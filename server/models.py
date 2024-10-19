@@ -1,21 +1,22 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
+#!/usr/bin/env python3
+#server/seed.py
 
-# contains definitions of tables and associated schema constructs
-metadata = MetaData()
+from app import app
+from models import db, Pet
 
-# create the Flask SQLAlchemy extension
-db = SQLAlchemy(metadata=metadata)
+with app.app_context():
 
-# define a model class by inheriting from db.Model.
+    # Create an empty list
+    pets = []
 
+    # Add some Pet instances to the list
+    pets.append(Pet(name = "Fido", species = "Dog"))
+    pets.append(Pet(name = "Whiskers", species = "Cat"))
+    pets.append(Pet(name = "Hermie", species = "Hamster"))
+    pets.append(Pet(name = "Slither", species = "Snake"))
 
-class Pet(db.Model):
-    __tablename__ = 'pets'
+    # Insert each Pet in the list into the database table
+    db.session.add_all(pets)
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    species = db.Column(db.String)
-
-    def __repr__(self):
-        return f'<Pet {self.id}, {self.name}, {self.species}>'
+    # Commit the transaction
+    db.session.commit()
